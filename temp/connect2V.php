@@ -126,7 +126,53 @@ echo"</pre>";
 </head>
 <body>
 
+<section class=" container-fluid ">        
+        <h1 class="text-center" >Historique Trello</h1>
+        <div class="row mt-4">
+        <?php
+            $cards = Card::getAll();
+         
+            foreach ($cards as $card) {
+                $liste = new Liste();
+                $liste->findById($card->getIdList());
+                $checklist = Checklist::getByCard($card->getId());
+                $checkboxes = Checkbox::getByCheckList($checklist->getId());
+                $lastActivity = $card->getDateLastActivity() ;
 
+            ?>
+                <div class="">
+                 <table>
+                    <tr>
+                        <td class="border border-secondary"><?= $liste->getName(); ?></td>
+                        <td class="border border-secondary"><?= $card->getName() ;?> </td>
+
+                        
+
+                <?php   foreach ($checkboxes as $checkbox) { ?>
+                                <td class="border border-secondary"><?php
+                                $etat = " <span class='text-success'>oui</span> ";
+                            if ($checkbox->getState() == 'incomplete') {
+                                    $etat = " <span class='text-danger'>non</span> ";
+                            }
+                                echo  $checkbox->getName() . '<br>' . $etat ;
+                                $dateCrea = $checkbox->getDateCreation();
+                             
+                      
+                            ?> 
+                <?php   } ?>
+                            </td>
+                    <td class="border border-secondary">Date de création : <?=strftime('%d-%m-%Y',strtotime($dateCrea)); ?></td>         
+                    <td class="border border-secondary">Date de dernière modif : <?=strftime('%d-%m-%Y',strtotime($lastActivity)); ?> </td>
+                    <td></td>
+                    </tr>
+                </table>
+               </div>
+     <?php  } ?>
+           
+          
+      
+        </div>
+    </section>  
 
       
         <h1 class="text-center" >Historique Trello</h1>
@@ -143,22 +189,21 @@ echo"</pre>";
                 $lastActivity = $card->getDateLastActivity() ;
 
             ?>
-         <div class="row ml-2">
-            <span class="border border-secondary p-1"><?= $liste->getName() . " : " . $card->getName() ; ?></span>
+         
+            <span class="border border-secondary "><?= $liste->getName() . " : " . $card->getName() . " : " . strftime('%d-%m-%Y',strtotime($dateCrea)) . " : " .strftime('%d-%m-%Y',strtotime($lastActivity)) ; ?></span>
                 <?php   foreach ($checkboxes as $checkbox) { ?>
                             <?php
                                 $etat = " <span class='text-success tex'>oui</span> ";
                             if ($checkbox->getState() == 'incomplete') {
                                     $etat = " <span class='text-danger tex'>non</span> ";
                             } ?>
-                          <span class="border border-secondary aLaLigne p-1"><?= $checkbox->getName() . '<br>' . $etat ;?></span>    
+                          <span class="border border-secondary aLaLigne"><?= $checkbox->getName() . '<br>' . $etat ;?></span>    
                             <?php   $dateCrea = $checkbox->getDateCreation(); ?>
    
                   <?php } ?>
-                  <span class="border border-secondary aLaLigne ">Dates création : <?= strftime('%d-%m-%Y',strtotime($dateCrea)) . " Derniere modif : " .strftime('%d-%m-%Y',strtotime($lastActivity)) ;  ;?></span>
                   <span class="border border-secondary aLaLigne ">Commentaires :<?= $card->getCommentaire()  ;?></span>     
      <?php  } ?>
-     </div> 
+               
      </div>   
       
         
